@@ -1,23 +1,18 @@
-FROM ubuntu:latest
-LABEL authors="herna"
-
-ENTRYPOINT ["top", "-b"]
-
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
 
-COPY pom.xml .
+COPY tablas/pom.xml ./pom.xml
 RUN mvn dependency:go-offline -B
 
-COPY src ./src
+COPY tablas/src ./src
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/target/shopweb-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/tablas-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
